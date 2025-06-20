@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fileservice
+  labels:
+    component: fileservice
+    module: fileservice-app
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: http
+      name: http
+  selector:
+    component: fileservice
+    module: fileservice-app
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fileservice
+  labels:
+    component: fileservice
+    module: fileservice-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: fileservice
+      module: fileservice-app
+  template:
+    metadata:
+      labels:
+        component: fileservice
+        module: fileservice-app
+    spec:
+      containers:
+        - name: fileservice-app
+          image: fileservice:local
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+              name: http
+          # env:
+          # - name: SPRING_DATASOURCE_URL
+          #   valueFrom:
+          #     configMapKeyRef:
+          #       key: postgres_url
+          #       name: fileservice
+          # - name: SPRING_DATASOURCE_PASSWORD
+          #   value: postgres
+          # - name: SPRING_DATASOURCE_USERNAME
+          #   value: postgres
+          resources:
+            limits:
+              memory: 1Gi
+            requests:
+              memory: 800Mi

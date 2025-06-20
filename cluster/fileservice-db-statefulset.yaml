@@ -1,0 +1,60 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fileservice-db
+  labels:
+    component: fileservice
+    module: fileservice-db
+spec:
+  ports:
+  - port: 5432
+    name: http
+  clusterIP: None
+  selector:
+    component: fileservice
+    module: fileservice-db
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: fileservice-postgres
+  labels:
+    component: fileservice
+    module: fileservice-db
+spec:
+  serviceName: fileservice-db
+  replicas: 1
+  selector:
+    matchLabels:
+      component: fileservice
+      module: fileservice-db
+  template:
+    metadata:
+      labels:
+        component: fileservice
+        module: fileservice-db
+    spec:
+      containers:
+      - name: fileservice-db-container
+        image: postgres:13-alpine
+        ports:
+        - containerPort: 5432
+          name: http
+        volumeMounts:
+        - name: fileservice-db-volume
+          mountPath: /var/lib/postgresql/data/
+        env:
+        - name: POSTGRES_HOST_AUTH_METHOD
+          value: "trust"
+  volumeClaimTemplates:
+  - metadata:
+      name: fileservice-db-volume
+      labels:
+        component: fileservice
+        module: fileservice-db
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi

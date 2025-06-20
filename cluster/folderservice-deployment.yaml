@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: folderservice
+  labels:
+    component: folderservice
+    module: folderservice-app
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: http
+      name: http
+  selector:
+    component: folderservice
+    module: folderservice-app
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: folderservice
+  labels:
+    component: folderservice
+    module: folderservice-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: folderservice
+      module: folderservice-app
+  template:
+    metadata:
+      labels:
+        component: folderservice
+        module: folderservice-app
+    spec:
+      containers:
+        - name: folderservice-app
+          image: folderservice:local
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+              name: http
+          # env:
+          # - name: SPRING_DATASOURCE_URL
+          #   valueFrom:
+          #     configMapKeyRef:
+          #       key: postgres_url
+          #       name: folderservice
+          # - name: SPRING_DATASOURCE_PASSWORD
+          #   value: postgres
+          # - name: SPRING_DATASOURCE_USERNAME
+          #   value: postgres
+          resources:
+            limits:
+              memory: 1Gi
+            requests:
+              memory: 800Mi
