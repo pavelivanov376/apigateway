@@ -26,7 +26,7 @@ COPY --from=frontend-build /app/ui/build/ src/main/resources/static/
 RUN chmod +x mvnw
 
 # Build the Spring Boot app
-RUN ./mvnw clean package -DskipTests
+RUN ./mvnw clean package -DskipTests -Dmaven.compiler.debug=true -Dmaven.compiler.debuglevel=lines,vars,source
 
 # Stage 3: Create minimal runtime image
 FROM eclipse-temurin:21-jdk-alpine
@@ -34,5 +34,8 @@ FROM eclipse-temurin:21-jdk-alpine
 WORKDIR /app
 COPY --from=backend-build /app/target/*.jar app.jar
 
-EXPOSE 80
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Expose application port and debug port
+EXPOSE 80 5005
+
+# Enable remote debugging
+ENTRYPOINT ["java", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005", "-jar", "app.jar"]

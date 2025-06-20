@@ -32,14 +32,21 @@ public class ApiGatewayApplication {
                 // Route /api/folder --> localhost:8086/api/folder in Folder Service
                 .route("upload-folder-request", r -> r
                         .path("/api/folder")
-                        .uri("http://foldervice:80")
+                        .uri("http://folderservice:80")
                 )
 
                 // Route /folder/{id} --> localhost:8086/folder/{id} in Folder Service a
                 .route("list-folder-request", r -> r
                         .path("/api/folder/{id}")
                         .filters(f -> f.rewritePath("/api/folder/(?<id>.*)", "/api/folder/${id}"))
-                        .uri("http://foldervice:80")
+                        .uri("http://folderservice:80")
+                )
+
+                // Route /download/{id} --> localhost:8085/download/{id} in Folder Service
+                .route("create-folder-name-only-request", r -> r
+                        .path("/api/folder/{id}")
+                        .filters(f -> f.rewritePath("/api/folder/(?<id>.*)", "/api/folder/${id}"))
+                        .uri("http://folderservice:80")
                 )
                 .build();
     }
