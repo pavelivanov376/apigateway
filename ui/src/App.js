@@ -11,7 +11,7 @@ function App() {
         showSearchField
       />
       <div style={{ padding: "2rem" }}>
-        <Button onClick={() => alert("Hello from UI")}>Click Me</Button>
+        <Button onClick={() => alert("Hello from UI!")}>Click Me</Button>
       </div>
     </div>
   );
