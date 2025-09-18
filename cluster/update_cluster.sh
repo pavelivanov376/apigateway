@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "See if you have built the images"
+# incorporate changes to the cluster by deleting and reapplying the deployments
 
 kubectl delete deployment folderservice
 
