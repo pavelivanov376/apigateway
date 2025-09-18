@@ -1,18 +1,11 @@
 import React from "react";
-import { ShellBar, Button } from "@ui5/webcomponents-react";
+import FileListingPage from "./components/FileListingPage";
 
 function App() {
   return (
-    <div>
-      <ShellBar
-        primaryTitle="My Gateway UI"
-        showCoPilot
-        showNotifications
-        showSearchField
-      />
-      <div style={{ padding: "2rem" }}>
-        <Button onClick={() => alert("Hello from UI!")}>Click Me</Button>
-      </div>
+    <div style={{ padding: "2rem" }}>
+      <h1>Cloud Storage navbar</h1>
+      <FileListingPage />
     </div>
   );
 }

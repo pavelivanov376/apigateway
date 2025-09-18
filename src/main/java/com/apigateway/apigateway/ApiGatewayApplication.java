@@ -42,12 +42,13 @@ public class ApiGatewayApplication {
                         .uri("http://folderservice:80")
                 )
 
-                // Route /download/{id} --> localhost:8085/download/{id} in Folder Service
+                // Route /folder/{id} --> localhost:8085/folder/{id} in Folder Service
                 .route("create-folder-name-only-request", r -> r
                         .path("/api/folder/{id}")
                         .filters(f -> f.rewritePath("/api/folder/(?<id>.*)", "/api/folder/${id}"))
                         .uri("http://folderservice:80")
                 )
                 .build();
+        //TODO: Can add Circuit Breaker, Rate Limiting, and other filters https://spring.io/guides/gs/gateway
     }
 }
