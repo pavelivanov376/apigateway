@@ -1,0 +1,29 @@
+# Backend build artifacts
+target/
+*.jar
+*.war
+*.ear
+
+# Frontend build artifacts
+ui/node_modules/
+ui/build/
+
+# IDE / local files
+.idea/
+.vscode/
+*.iml
+*.log
+*.tmp
+*.bak
+
+# VCS
+.git/
+.gitignore
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Env/secrets
+.env
+.env.*
