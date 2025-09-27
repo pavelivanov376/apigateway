@@ -13,6 +13,7 @@
 10. [CI/CD](#cicd)
 11. [Logging and Monitoring](#logging-and-monitoring)
 12. [Testing](#testing)
+13. [Debugging and Troubleshooting](#debugging-and-troubleshooting)
 
 
 ## Introduction
@@ -75,3 +76,17 @@ TODO integrate logging and monitoring tools such as ELK stack or Prometheus and 
 ## Testing
 Unit and integration tests will be implemented for each microservice using JUnit and Mockito.
 End-to-end tests for the entire application will be implemented using tools like Selenium or Cypress.
+
+## Debugging and Troubleshooting
+
+In order to connect to the Db I have to expose the port of the db:
+kubectl port-forward svc/folderservice-db 5555:5432
+
+Similarly, in order to debug the service: (update the pod name, because it is in a deployment)
+kubectl port-forward pod/folderservice-75c7db74fc-c7q5w 5005:5005
+
+Other useful commands:
+kubectl get all                               
+kubectl logs pod/folderservice-6b7695bfc-mzfjq
+kubectl describe service folderservice        
+kubectl rollout restart deployment fileservice
