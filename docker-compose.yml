@@ -1,0 +1,156 @@
+# Access:
+#   - UI/API Gateway: http://localhost (Basic Auth: admin/admin123)
+#   - File Service (direct): http://localhost:8081
+#   - Folder Service (direct): http://localhost:8082
+#
+# Debug ports:
+#   - API Gateway: 5005
+#   - File Service: 5006
+#   - Folder Service: 5007
+#
+# The local project structure should be
+# Project
+#   |_ ApiGateway
+#   |_ FolderService
+#   |_ FileService
+services:
+  # ===================
+  # API Gateway
+  # ===================
+  apigateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"       # HTTP
+      - "5005:5005"   # Debug
+    environment:
+      # Service token (same across all services)
+      - APP_SERVICE_TOKEN=clouddrive-internal-token-2024
+      # Backend service URLs (Docker Compose network names)
+      - FILESERVICE_URL=http://fileservice:80
+      - FOLDERSERVICE_URL=http://folderservice:80
+    depends_on:
+      fileservice:
+        condition: service_healthy
+      folderservice:
+        condition: service_healthy
+    networks:
+      - clouddrive-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  # ===================
+  # File Service
+  # ===================
+  fileservice:
+    build:
+      context: ../fileservice
+      dockerfile: Dockerfile
+    ports:
+      - "8081:80"     # HTTP (mapped to 8081 to avoid conflict)
+      - "5006:5005"   # Debug
+    environment:
+      # Database connection for Local PostgreSQL
+      - DATABASE_URL=jdbc:postgresql://fileservice-db:5432/postgres
+
+      # Database connection for Neon DB
+      # - DATABASE_URL=postgresql://user:pass@ep-xxx.neon.tech/fileservice?sslmode=require
+      # - DB_SSLMODE=require
+
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+      # Service token
+      - APP_SERVICE_TOKEN=clouddrive-internal-token-2024
+    depends_on:
+      fileservice-db:
+        condition: service_healthy
+    networks:
+      - clouddrive-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  fileservice-db:
+    image: postgres:12-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - fileservice-db-data:/var/lib/postgresql/data
+    networks:
+      - clouddrive-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ===================
+  # Folder Service
+  # ===================
+  folderservice:
+    build:
+      context: ../FolderService
+      dockerfile: Dockerfile
+    ports:
+      - "8082:80"     # HTTP (mapped to 8082 to avoid conflict)
+      - "5007:5005"   # Debug
+    environment:
+      # Database connection for Local PostgreSQL
+      - DATABASE_URL=jdbc:postgresql://folderservice-db:5432/postgres
+
+      # Database connection for Neon DB
+      # - DATABASE_URL=postgresql://user:pass@ep-xxx.neon.tech/folderservice?sslmode=require
+      # - DB_SSLMODE=require
+
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+      # Service token
+      - APP_SERVICE_TOKEN=clouddrive-internal-token-2024
+    depends_on:
+      folderservice-db:
+        condition: service_healthy
+    networks:
+      - clouddrive-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  folderservice-db:
+    image: postgres:12-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - folderservice-db-data:/var/lib/postgresql/data
+    networks:
+      - clouddrive-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# ===================
+# Networks & Volumes
+# ===================
+networks:
+  clouddrive-network:
+    driver: bridge
+
+volumes:
+  fileservice-db-data:
+  folderservice-db-data:
