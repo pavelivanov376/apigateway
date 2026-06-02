@@ -3,9 +3,10 @@ docker build -t folderservice:local ../../Projects/FolderService
 docker build -t fileservice:local ../../Projects/fileservice
 
 kubectl apply -f apigateway-deployment.yaml
-kubectl apply -f folderservice-db-statefulset.yaml
+# Skip local PostgreSQL - using Neon DB instead, uncomment if we use local db's
+# kubectl apply -f folderservice-db-statefulset.yaml
 kubectl apply -f folderservice-deployment.yaml
-kubectl apply -f fileservice-db-statefulset.yaml
+# kubectl apply -f fileservice-db-statefulset.yaml
 kubectl apply -f fileservice-deployment.yaml
 kubectl apply -f ingress-controller-deployment.yaml
 

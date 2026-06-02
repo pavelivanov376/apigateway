@@ -63,16 +63,13 @@ spec:
           ports:
             - containerPort: 80
               name: http
-          # env:
-          # - name: SPRING_DATASOURCE_URL
-          #   valueFrom:
-          #     configMapKeyRef:
-          #       key: postgres_url
-          #       name: apigateway
-          # - name: SPRING_DATASOURCE_PASSWORD
-          #   value: postgres
-          # - name: SPRING_DATASOURCE_USERNAME
-          #   value: postgres
+          env:
+            - name: FILESERVICE_URL
+              value: "http://fileservice:80"
+            - name: FOLDERSERVICE_URL
+              value: "http://folderservice:80"
+            - name: APP_SERVICE_TOKEN
+              value: "clouddrive-internal-token-2024"
           resources:
             limits:
               memory: 1Gi

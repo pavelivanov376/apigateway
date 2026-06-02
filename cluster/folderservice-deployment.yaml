@@ -42,16 +42,29 @@ spec:
           ports:
             - containerPort: 80
               name: http
-          # env:
-          # - name: SPRING_DATASOURCE_URL
-          #   valueFrom:
-          #     configMapKeyRef:
-          #       key: postgres_url
-          #       name: folderservice
-          # - name: SPRING_DATASOURCE_PASSWORD
-          #   value: postgres
-          # - name: SPRING_DATASOURCE_USERNAME
-          #   value: postgres
+          env:
+            - name: DATABASE_URL
+              # Neon DB:
+              value: "jdbc:postgresql://ep-fragrant-base-agf03n7q-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+              # Local PostgreSQL:
+              # value: "jdbc:postgresql://folderservice-postgres-0.folderservice-db:5432/postgres"
+            - name: DATABASE_USERNAME
+              # Neon DB:
+              value: "neondb_owner"
+              # Local PostgreSQL:
+              # value: "postgres"
+            - name: DATABASE_PASSWORD
+              # Neon DB:
+              value: "PASSWORD_PLACEHOLDER"
+              # Local PostgreSQL:
+              # value: "postgres"
+            - name: DB_SSLMODE
+              # Neon DB:
+              value: "require"
+              # Local PostgreSQL:
+              # value: "disable"
+            - name: APP_SERVICE_TOKEN
+              value: "TOKEN_PLACEHOLDER"
           resources:
             limits:
               memory: 1Gi
