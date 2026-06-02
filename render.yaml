@@ -10,8 +10,8 @@ services:
       - key: PORT
         value: 80
       - key: APP_SERVICE_TOKEN
-        sync: false  # Set manually - must match other services
+        sync: false
       - key: FILESERVICE_URL
-        sync: false  # Set after fileservice deploys
+        sync: false
       - key: FOLDERSERVICE_URL
-        sync: false  # Set after folderservice deploys
+        sync: false
