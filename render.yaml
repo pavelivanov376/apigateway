@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: clouddrive-gateway
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: PORT
+        value: 80
+      - key: APP_SERVICE_TOKEN
+        sync: false  # Set manually - must match other services
+      - key: FILESERVICE_URL
+        sync: false  # Set after fileservice deploys
+      - key: FOLDERSERVICE_URL
+        sync: false  # Set after folderservice deploys
