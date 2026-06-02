@@ -1,5 +1,10 @@
-# Cloud Storage App Technical Documentation
+# CloudDrive
+Accessible here: [https://clouddrive-5rm3.onrender.com/](https://clouddrive-5rm3.onrender.com/)
 
+Please note that the services in resource-saving mode and will automatically cold start when accessed in a few minutes. The credentials are: admin/admin
+
+## Cloud Storage App Technical Documentation
+This repository contains not only the apigatway service, but also the UI and some common resources, applicable for the CloudDrive projcet as a whole as the kubernetes, docker-compose and render setups.
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Architecture](#architecture)
